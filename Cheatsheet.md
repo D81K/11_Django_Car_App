@@ -101,6 +101,11 @@ python manage.py createsuperuser
 ```py
 path('app/', include('app.urls')),
 ```
+- import `include`in main/urls.py
+- Use this code for class-based views
+```py
+path('cars/', CarListView.as_view()),
+```
 
 - Create URL patterns / paths
 
@@ -109,11 +114,61 @@ path('app/', include('app.urls')),
 # Permissions
 - Choose a permission class
 - If none of the classes fits your needs, create a custom permission class
-- Create app/permissions.py and a custom permission class
+- Create app/permissions.py and a custom permission class OR add built-in authentication to a class-based view
+- For function-based views you must use related decorators
 - Import custom classes in views.py to use them
 
 # Authentication
 - Choose between basic, token or session authentication
+- Add dj_rest_auth app to INSTALLED_APPS in your django settings:
+
+### Setting the authentication scheme
+
+The default authentication schemes may be set globally, using the DEFAULT_AUTHENTICATION_CLASSES setting. We will use token auth.
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+```
+
+## Install dj-rest-auth
+
+In this project, we will use dj-rest-auth. Follow [documentation](https://dj-rest-auth.readthedocs.io/en/latest/installation.html) and install.
+
+- Install package:
+```py
+pip install dj-rest-auth
+```
+
+- Update requirements.txt:
+```py
+pip freeze > requirements.txt
+```
+
+- Add dj_rest_auth app to INSTALLED_APPS in your django settings:
+```py
+'rest_framework.authtoken',
+'dj_rest_auth',
+```
+
+- Migrate your database, this will apply db tables originated from auth token:
+```py
+python manage.py migrate
+```
+
+- Include users.urls to main url pattern. Create users/urls.py and add dj_rest_auth:
+```py
+urlpatterns = [
+    path('dj-rest-auth/', include('dj_rest_auth.urls'))
+]
+```
+
+- Check the endpoints;
+  - Login (See the token created by package)
+  - Logout
  
 
 # Spinning up an existing project
